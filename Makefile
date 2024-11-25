@@ -15,6 +15,7 @@ INCLUDES=\
 -I./include/opengl/ \
 -I./include/game/ \
 -I./include/dev/ \
+-I./include/ma/ \
 -I./include/renderer/ \
 -I./include/util/ \
 -I/usr/include/freetype2 \

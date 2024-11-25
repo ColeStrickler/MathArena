@@ -113,8 +113,12 @@ void RenderObject::DrawCall() const
     }
     else
     {
+        if (m_ObjectType == OBJECTYPE::PointsObject)
+            glDrawArrays(GL_POINTS, 0, count);
+        else
+            glDrawArrays(GL_TRIANGLES, 0, count);
         //printf("here %d\n", count);
-        glDrawArrays(GL_TRIANGLES, 0, count);
+        
 
         // glDrawArrays(GL_TRIANGLES, 0, 36);
     }
@@ -203,6 +207,10 @@ void RenderObject::HandlePhongShaders()
         //m_ShaderProgram->SetUniform1i("textureObject.specularMap", m_TexturedObject.GetSpecularSlot());
         m_ShaderProgram->SetUniform1i("textureObject.useDiffuse", 1);
         m_ShaderProgram->SetUniform1i("textureObject.useSpecular", 0);
+        break;
+    }
+    case OBJECTYPE::PointsObject:
+    {
         break;
     }
     default:

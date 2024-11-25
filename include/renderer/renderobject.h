@@ -17,7 +17,8 @@ enum OBJECTYPE
     TextObject,
     ComplexModelObject,
     OutlineObject,
-    ChunkMesh
+    ChunkMesh,
+    PointsObject
 };
 
 typedef struct Light

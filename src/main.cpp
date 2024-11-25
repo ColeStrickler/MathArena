@@ -23,6 +23,7 @@
 #include "util.h"
 #include "gpu_allocator.h"
 #include "geometry.h"
+#include "grid.h"
 #include "utility"
 #include "vertices.h"
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
@@ -82,6 +83,8 @@ if (glInvalidateBufferSubData == NULL) {
     // glAttachShader(shaderProgram, fragmentShader);
     renderer.SetLightingModel(LightingModel::Phong);
 
+
+   
 
 
     if (!shaderProgram.Compile())
@@ -148,11 +151,12 @@ if (glInvalidateBufferSubData == NULL) {
     //renderer.AddRenderObject(l_obj);
 //
     //auto sphere = new Sphere(1.0f, 100, &shaderProgram);
+     auto grid = new Grid();
     auto sphere = new Function3D(2.0f, 12.0f, 2.0f, 500, &shaderProgram);
     printf("created sphere\n");
     sphere->m_RenderObj->Translate(glm::vec3(0.0f, 70.0f, 0.0f));
     renderer.AddRenderObject(sphere->m_RenderObj);
-    
+    renderer.AddRenderObject(grid->m_RenderObj);
 
     //auto 
 

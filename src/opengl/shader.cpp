@@ -13,7 +13,8 @@ Shader::Shader(const std::string &shaderfile, GLenum shader_type)
     m_ShaderType = shader_type;
     if (m_error != ShaderError::NO_ERROR_OK)
     {
-        m_log = "Shader file unable to be read\n";
+        m_log = "Shader file " + shaderfile + " unable to be read\n";
+
         return;
     }
     m_shaderID = glCreateShader(shader_type);

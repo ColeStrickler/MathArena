@@ -24,6 +24,7 @@ void Renderer::AddRenderObject(RenderObject *obj)
         case OBJECTYPE::TexturedObject: m_RenderObjects.push_back(obj); break;
         case OBJECTYPE::ComplexModelObject: m_RenderObjects.push_back(obj); break;
         case OBJECTYPE::ChunkMesh: m_RenderObjects.push_back(obj); break;
+        case OBJECTYPE::PointsObject: m_RenderObjects.push_back(obj); break;
         default:
             logger.Log(LOGTYPE::WARNING, "Renderer::AddRenderObject() --> attempted to add RenderObject with invalid OBJECTTYPE.\n");
     }
