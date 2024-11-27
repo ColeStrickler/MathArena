@@ -44,11 +44,11 @@ int main()
 {
 
     // Check for ARB_invalidate_subdata support
-if (glInvalidateBufferSubData == NULL) {
-    // Handle the case where the extension is not supported
-    printf("not supported\n");
-    return 0;
-}
+    if (glInvalidateBufferSubData == NULL) {
+        // Handle the case where the extension is not supported
+        printf("not supported\n");
+        return 0;
+    }
 
     //GUI_Manager.RegisterLogTarget(&logger);
     logger.SetLogLevel(LOGLEVEL::LEVEL_INFO);
@@ -73,12 +73,34 @@ if (glInvalidateBufferSubData == NULL) {
     if (fragment_shader.CheckError() != ShaderError::NO_ERROR_OK)
         logger.Log(LOGTYPE::ERROR, fragment_shader.FetchLog());
 
+
+
+
+
+    // NORMALS SHADER
+    Shader geometry_vertex_shader(util::getcwd() + "/src/shaders/vertex_normals.glsl", GL_VERTEX_SHADER);
+    if (geometry_vertex_shader.CheckError() != ShaderError::NO_ERROR_OK)
+        logger.Log(LOGTYPE::ERROR, geometry_vertex_shader.FetchLog());
+    Shader geometry_fragment_shader(util::getcwd() + "/src/shaders/fragment_normals.glsl", GL_FRAGMENT_SHADER);
+    if (geometry_fragment_shader.CheckError() != ShaderError::NO_ERROR_OK)
+        logger.Log(LOGTYPE::ERROR, geometry_fragment_shader.FetchLog());
+
+    Shader geometry_geometry_shader(util::getcwd() + "/src/shaders/geometry_normals.glsl", GL_GEOMETRY_SHADER);
+    if (geometry_geometry_shader.CheckError() != ShaderError::NO_ERROR_OK)
+        logger.Log(LOGTYPE::ERROR, geometry_geometry_shader.FetchLog());
+    
+
+    ShaderProgram normalSP;
+    normalSP.AddShader(&geometry_vertex_shader);
+    normalSP.AddShader(&geometry_fragment_shader);
+    normalSP.AddShader(&geometry_geometry_shader);
+
     // check for shader compile errors
     ShaderProgram shaderProgram;
     shaderProgram.AddShader(&vertex_shader);
     shaderProgram.AddShader(&fragment_shader);
 
-
+   
     // glAttachShader(shaderProgram, vertexShader);
     // glAttachShader(shaderProgram, fragmentShader);
     renderer.SetLightingModel(LightingModel::Phong);
@@ -87,8 +109,11 @@ if (glInvalidateBufferSubData == NULL) {
    
 
 
-    if (!shaderProgram.Compile())
+    if (!shaderProgram.Compile() || !normalSP.Compile())
     {
+         
+        normalSP.CheckError();
+        while(1);
         return -1;
     }
 
@@ -147,15 +172,19 @@ if (glInvalidateBufferSubData == NULL) {
             renderer.AddRenderObject(obj);
         }
     }
+    
     //l_obj->Translate(glm::vec3(0.0f, 90.0f, 0.0f));
     //renderer.AddRenderObject(l_obj);
-//
+//  
     //auto sphere = new Sphere(1.0f, 100, &shaderProgram);
+    glLineWidth(2);
      auto grid = new Grid();
-    auto sphere = new Function3D(2.0f, 12.0f, 2.0f, 500, &shaderProgram);
+    auto sphere = new Function3D(8.0f, 12.0f, 8.0f, 500, &shaderProgram);
+
+    auto sphereNormals = new Function3D(8.0f, 12.0f, 8.0f, 500, &normalSP);
     printf("created sphere\n");
-    sphere->m_RenderObj->Translate(glm::vec3(0.0f, 70.0f, 0.0f));
     renderer.AddRenderObject(sphere->m_RenderObj);
+    renderer.AddRenderObject(sphereNormals->m_RenderObj);
     renderer.AddRenderObject(grid->m_RenderObj);
 
     //auto 
@@ -223,6 +252,7 @@ if (glInvalidateBufferSubData == NULL) {
    
     while (!glfwWindowShouldClose(gl.GetWindow()))
     {
+        printf("here\n");
         // gl.CalcDeltaTime();
        // chunkManager.PerFrame();
         gl.PerFrame();

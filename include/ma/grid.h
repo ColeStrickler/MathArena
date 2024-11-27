@@ -15,7 +15,7 @@ class Grid
 {
 public:
 
-    Grid(int xmin=-10, int ymin=-10, int zmin=-10, int xmax=10, int ymax=10, int zmax=10);
+    Grid(int xmin=-20, int ymin=-20, int zmin=-20, int xmax=20, int ymax=20, int zmax=20);
     ~Grid();
 
     void SetXMin(int xMin);

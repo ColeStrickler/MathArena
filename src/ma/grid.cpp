@@ -5,13 +5,24 @@ extern Logger logger;
 Grid::Grid(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax) : m_xMin(xmin), m_yMin(ymin), m_zMin(zmin), m_xMax(xmax), m_yMax(ymax), m_zMax(zmax)
 {
 
+
+
+    // xz plane
     for (int x = m_xMin; x < m_xMax; x++)
     {
-        for (int z = m_yMin; z < m_zMax; z++)
+        for (int z = m_zMin; z < m_zMax; z++)
         {
             m_Points.push_back(GridVertex{glm::vec3(static_cast<float>(x), 0.0f, static_cast<float>(z))});
         }
     }
+
+    // y axis
+    for (int y = m_yMin; y < m_yMax; y++)
+    {
+        m_Points.push_back(GridVertex{glm::vec3(0.0f,static_cast<float>(y),0.0f)});
+    }
+
+
     //m_Points.push_back(GridVertex{glm::vec3(0.0f, 0.0f, 0.0f)});
 
     VertexBuffer* vb = new VertexBuffer((float*)m_Points.data(), m_Points.size() * sizeof(GridVertex));

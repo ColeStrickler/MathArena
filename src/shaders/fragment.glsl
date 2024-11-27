@@ -199,7 +199,7 @@ void main()
 {
     switch(ObjectType)
     {
-        case 0: FragColor = vec4(vec3(1.0, 1.0, 1.0), 1.0); break; //vec4(getMaterialColor(), 1.0); break;
+        case 0: FragColor = vec4(vec3(1.0, 0.6, 0.33), 1.0); break; //vec4(getMaterialColor(), 1.0); break;
         case 1: FragColor = vec4(vec3(1.0, 1.0, 1.0), 1.0); break;
         case 2: FragColor = vec4(getTextureColor(), 1.0); break;
         case 3: FragColor = vec4(vec3(1.0, 1.0, 1.0), 1.0); break;

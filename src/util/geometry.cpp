@@ -28,24 +28,22 @@ Function3D::Function3D(float xRange, float yRange, float zRange, int resolution,
             // substitute a equation calculator here
             // y = equation->eval(x, z);
             // for now y = x^2 + z^2
-            float y = (x*x);//+z*z*z*z);
+            float y = 0.2f*(x*x) + 0.2f*z*z;//+z*z*z*z);
             // this may need to be reworked - may break things in how we push indices
-            if (y > m_yRange)
-                y = m_yRange;
-            if (y < -m_yRange)
-                y = -m_yRange;
-
 
             // gradient = normal 
             //printf("xInit = %.3f\n", xval);
-            auto normal = glm::normalize(glm::vec3(-2*x, 1, 0));
+            auto normal = glm::normalize(glm::vec3(-0.4*x, 1, -0.4*z));
 
 
             // 2D
-            if (z < 0)
-                addVertex(glm::vec3(x, y, -0.01), normal);
-            else
-                addVertex(glm::vec3(x, y, 0.01), normal);
+            //if (z < 0)
+            //    addVertex(glm::vec3(x, y, -0.01), normal);
+            //else
+            //    addVertex(glm::vec3(x, y, 0.01), normal);
+
+            addVertex(glm::vec3(x,y,z), normal);
+
             //printf("loc: %.3f,%.3f,%.3f\tnormal %.3f,%.3f,%.3f\n",x,y,z,normal.x,normal.y,normal.z);
             if (row)
             {

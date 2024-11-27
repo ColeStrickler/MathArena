@@ -165,6 +165,10 @@ bool ShaderProgram::SetUniformVec3(const std::string &name, glm::vec3 data)
 ShaderProgram::ShaderProgram() 
 {
     m_ProgramId = glCreateProgram();
+    if (m_ProgramId == 0)
+    {
+        logger.Log(LOGTYPE::ERROR, "ShaderProgram::ShaderProgram() glCreateProgram failed.");
+    }
     // allocate spot for GL_COMPUTE_SHADER, GL_VERTEX_SHADER, GL_TESS_CONTROL_SHADER, GL_TESS_EVALUATION_SHADER, GL_GEOMETRY_SHADER, or GL_FRAGMENT_SHADER
     m_shaders = std::vector<Shader*>(6, nullptr);
 }
@@ -207,13 +211,17 @@ bool ShaderProgram::Compile()
         if (shader != nullptr)
             shader->Attach(m_ProgramId);
     }
-
+   
     int success;
     char infoLog[512];
+    printf("here\n");
     glLinkProgram(m_ProgramId);
     // check for linking errors
+      
     glGetProgramiv(m_ProgramId, GL_LINK_STATUS, &success);
+   
     if (!success) {
+            
         glGetProgramInfoLog(m_ProgramId, 512, NULL, infoLog);
         logger.Log(LOGTYPE::ERROR, "ShaderProgram::Compile() " + std::string(infoLog));
         m_error = ShaderError::PROGRAM_LINK_ERROR;
