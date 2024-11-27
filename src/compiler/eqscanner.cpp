@@ -15,14 +15,10 @@ EquationScanner::~EquationScanner()
 {
 }
 
-Token *EquationScanner::GetNextToken()
+int EquationScanner::GetNextToken(Token** tok)
 {
-    Token* out = nullptr;
-    int type = yylex(&out);
-    if (type == TokenType::ERROR)
-        printf("got error\n");
-    printf("got token %d, %x\n", type, out);
-    return out;
+    int type = yylex(tok);
+    return type;
 }
 
 
@@ -33,7 +29,26 @@ int main()
     auto fs = std::ifstream(file);
     auto eq = EquationScanner(&fs);
 
-    auto tok = eq.GetNextToken();
+    bool err = false;
 
-    printf("lexeme: %s\n", tok->m_Lexeme.c_str());
+    while (true)
+    {
+
+        Token* out = nullptr;
+        auto type = eq.GetNextToken(&out);
+        if (type == TokenType::ERROR)
+        {
+            printf("Error %d\n", eq.m_colNum);
+            break;
+        }
+        else if (type == TokenType::WHITESPACE)
+            continue;
+        else if (type == TokenType::END)
+            break;
+        else
+            std::cout << out->toString() << "\n";
+    }
+    
+
+    printf("done\n");
 }

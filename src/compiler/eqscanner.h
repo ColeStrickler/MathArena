@@ -19,6 +19,22 @@ enum TokenType
     END,
 };
 
+static char* TokenTypeStrings[]
+{
+    "ERROR",
+    "NUMBER",
+    "VARIABLE",
+    "LPAREN",
+    "RPAREN",
+    "CROSS",
+    "DASH",
+    "STAR",
+    "SLASH",
+    "POW",
+    "WHITESPACE",
+    "END",
+};
+
 
 
 typedef struct Token
@@ -27,6 +43,8 @@ typedef struct Token
     {
 
     }
+
+    std::string toString() {return "TokenType::" + std::string(TokenTypeStrings[m_Type]) + " ==> " + m_Lexeme;}
     int m_ColStart;
     int m_ColEnd;
     TokenType m_Type;
@@ -42,10 +60,9 @@ public:
     ~EquationScanner();
 
     int yylex(Token** out);
-    Token* GetNextToken();
-
-private:
+    int GetNextToken(Token** tok);
     int m_colNum;
+private:
     std::string m_FileStringStream;
     std::ifstream* m_File;
 

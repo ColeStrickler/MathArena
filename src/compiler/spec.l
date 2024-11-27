@@ -36,7 +36,7 @@ CROSS \+
 DASH \-
 STAR \*
 SLASH \/
-POW ^
+POW \^
 WHITESPACE " "
 
 %%
@@ -51,9 +51,70 @@ WHITESPACE " "
     return TokenType::NUMBER;
 }
 
+{VARIABLE} {
+    std::string text(yytext);
+    *out = new Token(TokenType::VARIABLE, text, m_colNum, m_colNum + text.size());
+    m_colNum += strlen(yytext);
+    return TokenType::VARIABLE;
+}
+
+{LPAREN} {
+    std::string text(yytext);
+    *out = new Token(TokenType::LPAREN, text, m_colNum, m_colNum + text.size());
+    m_colNum += strlen(yytext);
+    return TokenType::LPAREN;
+}
+
+{RPAREN} {
+    std::string text(yytext);
+    *out = new Token(TokenType::RPAREN, text, m_colNum, m_colNum + text.size());
+    m_colNum += strlen(yytext);
+    return TokenType::RPAREN;
+}
+
+{CROSS} {
+    std::string text(yytext);
+    *out = new Token(TokenType::CROSS, text, m_colNum, m_colNum + text.size());
+    m_colNum += strlen(yytext);
+    return TokenType::CROSS;
+}
+
+{DASH} {
+    std::string text(yytext);
+    *out = new Token(TokenType::DASH, text, m_colNum, m_colNum + text.size());
+    m_colNum += strlen(yytext);
+    return TokenType::DASH;
+}
+
+{STAR} {
+    std::string text(yytext);
+    *out = new Token(TokenType::STAR, text, m_colNum, m_colNum + text.size());
+    m_colNum += strlen(yytext);
+    return TokenType::STAR;
+}
+
+{SLASH} {
+    std::string text(yytext);
+    *out = new Token(TokenType::SLASH, text, m_colNum, m_colNum + text.size());
+    m_colNum += strlen(yytext);
+    return TokenType::SLASH;
+}
+
+{POW} {
+    std::string text(yytext);
+    *out = new Token(TokenType::POW, text, m_colNum, m_colNum + text.size());
+    m_colNum += strlen(yytext);
+    return TokenType::POW;
+}
+
+{WHITESPACE} {
+    m_colNum++;
+    *out = nullptr;
+    return TokenType::WHITESPACE;
+}
 
 . {
-    m_colNum++;
+    
     out = nullptr;
     return TokenType::ERROR;
 }
