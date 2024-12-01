@@ -3,7 +3,8 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-
+#include <vector>
+#include "parser.h"
 EquationScanner::EquationScanner(std::ifstream* file) : yyFlexLexer(file)
 {
 
@@ -30,6 +31,7 @@ int main()
     auto eq = EquationScanner(&fs);
 
     bool err = false;
+    std::vector<Token*> tokens;
 
     while (true)
     {
@@ -47,6 +49,19 @@ int main()
             break;
         else
             std::cout << out->toString() << "\n";
+        tokens.push_back(out);
+    }
+
+
+    EquationParser parser(tokens);
+    if(!parser.Parse())
+    {
+        std::cout << parser.GetErrorString();
+        printf("Parse failed.\n");
+    }
+    else
+    {
+        printf("Parse successful.");
     }
     
 

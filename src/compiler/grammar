@@ -1,0 +1,10 @@
+EquationNode ::= ExprNode
+ExprNode ::= BinaryExprNode | Term
+BinaryExprNode ::= PlusNode | MinusNode | MultNode | DivNode
+PlusNode ::= Term PLUS ExprNode
+MinusNode ::= Term DASH ExprNode
+MultNode ::= Term STAR ExprNode
+DivNode ::= Term SLASH ExprNode
+Term ::= NUMBER | NUMBER VARIABLE CARROT NUMBER | NUMBER VARIABLE | VARIABLE | VARIABLE CARROT NUMBER |
+         LPAREN ExprNode RPAREN | LPAREN ExprNode RPAREN CARROT NUMBER| UnaryExprNode
+UnaryExprNode ::= DASH Term

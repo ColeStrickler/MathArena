@@ -44,7 +44,10 @@ typedef struct Token
 
     }
 
-    std::string toString() {return "TokenType::" + std::string(TokenTypeStrings[m_Type]) + " ==> " + m_Lexeme;}
+    std::string toString() const {return "TokenType::" + std::string(TokenTypeStrings[m_Type]) + " ==> " + m_Lexeme;}
+    TokenType GetType() const {return m_Type;}
+    std::string GetLexeme() const {return m_Lexeme;}
+private:
     int m_ColStart;
     int m_ColEnd;
     TokenType m_Type;
