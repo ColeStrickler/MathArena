@@ -1,22 +1,25 @@
 #include "parser.h"
 
-EquationParser::EquationParser(std::vector<Token *> tokens) : m_Equation(nullptr), m_CurrentToken(0), m_Tokens(tokens)
+EquationParser::EquationParser(std::vector<Token *> tokens) : m_Equation(nullptr), m_CurrentToken(0), m_Tokens(tokens), m_HasError(false)
 {
 }
 
 EquationParser::~EquationParser()
 {
-    m_Equation->Delete(); // frees all nodes in AST
+    //m_Equation->Delete(); // frees all nodes in AST
 }
 
 bool EquationParser::Parse()
 {
     printf("Parse()\n");
     auto expr = ParseASExpr();
-
+    printf("Parse done\n");
     if (IsError() || expr == nullptr)
+    {
+        printf("IsError()\n");
         return false;
-
+    }
+    printf("1\n");
     if (m_CurrentToken < m_Tokens.size())
     {
         SetError("Did not successfully parse entire token steam.");
@@ -36,12 +39,16 @@ ExprNode *EquationParser::ParseMDExpr()
         SetError("EquationParser::ParseMDExpr() arrived at unexpected end.");
         return nullptr;
     }
-    printf("here\n");
+   
     auto term = ParseTermNode();
     if (AtEnd() || IsError())
         return term;
 
     auto mdnode = new MDNode();
+    /*
+        We may want to change the beginning token type to nop
+    */
+    mdnode->AddExpr(term, TokenType::STAR);
 
     while (PeekType() == TokenType::STAR || PeekType() == TokenType::SLASH)
     {
@@ -63,12 +70,15 @@ ExprNode *EquationParser::ParseASExpr()
         SetError("EquationParser::ParseASExpr() arrived at unexpected end.");
         return nullptr;
     }
-
+    
     auto term = ParseMDExpr();
     if (AtEnd() || IsError())
         return term;
-
+    /*
+        We may want to change the beginning token type to nop
+    */
     auto asnode = new ASNode();
+    asnode->AddExpr(term, TokenType::CROSS);
 
     while (PeekType() == TokenType::CROSS || PeekType() == TokenType::DASH)
     {

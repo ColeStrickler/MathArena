@@ -30,6 +30,8 @@ int main()
     auto fs = std::ifstream(file);
     auto eq = EquationScanner(&fs);
 
+    
+
     bool err = false;
     std::vector<Token*> tokens;
 
@@ -51,19 +53,22 @@ int main()
             std::cout << out->toString() << "\n";
         tokens.push_back(out);
     }
-
+    fs.close();
 
     EquationParser parser(tokens);
     if(!parser.Parse())
     {
-        std::cout << parser.GetErrorString();
+        //std::cout << parser.GetErrorString();
         printf("Parse failed.\n");
     }
     else
     {
         printf("Parse successful.");
+        auto ast = parser.GetEquation();
+        std::cout << ast->toString();
     }
     
 
     printf("done\n");
+    return 0;
 }
