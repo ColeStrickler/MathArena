@@ -13,7 +13,8 @@ public:
     bool Parse();
     EquationNode* GetEquation() const { return m_Equation; };
     std::string GetErrorString() {
-        return "EquationParser error at token #" + std::to_string(m_CurrentToken) + " ==> " + Peek()->toString() + "\n" + m_ErrorLog;
+        return "EquationParser error at token #" + std::to_string(m_CurrentToken) + " ==> " + (Peek() == nullptr ? std::string("") :\
+         Peek()->toString()) + "\n" + m_ErrorLog;
     }
     
 private:
@@ -39,6 +40,7 @@ private:
     
 
     // Errors
+    bool CheckInvalidVariable(const std::string& variable);
     bool IsError();
     void SetError(const std::string& err);
     bool m_HasError;

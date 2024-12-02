@@ -38,6 +38,7 @@ STAR \*
 SLASH \/
 POW \^
 WHITESPACE " "
+EQ =
 
 %%
 
@@ -105,6 +106,13 @@ WHITESPACE " "
     *out = new Token(TokenType::POW, text, m_colNum, m_colNum + text.size());
     m_colNum += strlen(yytext);
     return TokenType::POW;
+}
+
+{EQ} {
+    std::string text(yytext);
+    *out = new Token(TokenType::EQ, text, m_colNum, m_colNum + text.size());
+    m_colNum += strlen(yytext);
+    return TokenType::EQ;
 }
 
 {WHITESPACE} {

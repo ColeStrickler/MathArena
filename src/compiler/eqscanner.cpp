@@ -5,11 +5,9 @@
 #include <sstream>
 #include <vector>
 #include "parser.h"
-EquationScanner::EquationScanner(std::ifstream* file) : yyFlexLexer(file)
+EquationScanner::EquationScanner(std::ifstream* file) : yyFlexLexer(file), m_colNum(0)
 {
-
-    
-    
+   
 }
 
 EquationScanner::~EquationScanner()
@@ -58,8 +56,10 @@ int main()
     EquationParser parser(tokens);
     if(!parser.Parse())
     {
-        //std::cout << parser.GetErrorString();
+        printf("here\n");
+        std::cout << parser.GetErrorString();
         printf("Parse failed.\n");
+
     }
     else
     {

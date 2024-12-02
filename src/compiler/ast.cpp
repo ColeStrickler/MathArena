@@ -1,6 +1,6 @@
 #include "ast.h"
 
-EquationNode::EquationNode(ExprNode *root) : m_Root(root)
+EquationNode::EquationNode(ExprNode* lhs, ExprNode* rhs) : m_LHS(lhs), m_RHS(rhs)
 {
 }
 

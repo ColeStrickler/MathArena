@@ -68,15 +68,16 @@ public:
 class EquationNode : public MathNode
 {
 public:
-    EquationNode(ExprNode* root);
+    EquationNode(ExprNode* lhs, ExprNode* rhs);
     ~EquationNode();
 
 
-    virtual std::string toString() {return m_Root->toString();}
+    virtual std::string toString() {return m_LHS->toString() + "=" + m_RHS->toString();}
 // we will add some properties to interact with other equation nodes here
 
 private: 
-    ExprNode* m_Root;
+    ExprNode* m_LHS;
+    ExprNode* m_RHS;
 
 };
 
@@ -101,7 +102,7 @@ class TermNode : public ExprNode
 public:
     TermNode(double coefficient, const std::string& variable, double exp) : m_Type(TERMVARIABLE), m_Number(coefficient), m_Var(variable), m_Exponent(exp)
     {
-        
+
     }
     TermNode(double coefficient, ExprNode* expr, double exp) : m_Type(TERMEXPRESSION), m_Number(coefficient), m_Expression(expr), m_Exponent(exp)
     {

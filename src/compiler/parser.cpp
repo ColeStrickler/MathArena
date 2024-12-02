@@ -12,9 +12,24 @@ EquationParser::~EquationParser()
 bool EquationParser::Parse()
 {
     printf("Parse()\n");
-    auto expr = ParseASExpr();
+
+    auto lhs = ParseASExpr();
+    printf("lhs done\n");
+    if (IsError() || lhs == nullptr)
+    {
+        printf("IsError()\n");
+        return false;
+    }
+
+    if (!ConsumeIfEqual(TokenType::EQ))
+    {
+        SetError("No = in equation.");
+        return false;
+    }
+
+    auto rhs = ParseASExpr();
     printf("Parse done\n");
-    if (IsError() || expr == nullptr)
+    if (IsError() || rhs == nullptr)
     {
         printf("IsError()\n");
         return false;
@@ -27,7 +42,7 @@ bool EquationParser::Parse()
     }
 
 
-    m_Equation = new EquationNode(expr);
+    m_Equation = new EquationNode(lhs, rhs);
     return true;
 }
 
@@ -131,6 +146,12 @@ ExprNode *EquationParser::ParseTermNode()
                 auto nextType = next->GetType();
                 if (nextType == TokenType::VARIABLE)
                 {
+                    if (CheckInvalidVariable(next->GetLexeme()))
+                    {
+                        SetError("Variable must be x, y, or z.");
+                        return nullptr;
+                    }
+
                     Consume();
                     if (AtEnd())
                         return new TermNode(std::stod(tok->GetLexeme()), next->GetLexeme(), 1.0f);
@@ -167,6 +188,13 @@ ExprNode *EquationParser::ParseTermNode()
         }
         case TokenType::VARIABLE:
         {
+            printf("invalid var\n");
+             if (CheckInvalidVariable(tok->GetLexeme()))
+            {
+                
+                SetError("Variable must be x, y, or z.");
+                return nullptr;
+            }
             Consume();
             if (!AtEnd())
             {
@@ -271,6 +299,11 @@ Token *EquationParser::PeekAhead(int n)
 bool EquationParser::AtEnd()
 {
     return m_CurrentToken >= m_Tokens.size();
+}
+
+bool EquationParser::CheckInvalidVariable(const std::string &variable)
+{
+    return !(variable == "x" || variable == "y" || variable == "z");
 }
 
 bool EquationParser::IsError()

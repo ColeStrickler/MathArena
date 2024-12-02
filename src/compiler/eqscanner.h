@@ -15,6 +15,7 @@ enum TokenType
     STAR,
     SLASH,
     POW,
+    EQ,
     WHITESPACE,
     END,
 };
@@ -31,6 +32,7 @@ static char* TokenTypeStrings[]
     "STAR",
     "SLASH",
     "POW",
+    "EQ",
     "WHITESPACE",
     "END",
 };
