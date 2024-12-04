@@ -66,6 +66,8 @@ int main()
         printf("Parse successful.");
         auto ast = parser.GetEquation();
         std::cout << ast->toString();
+        std::unordered_map<std::string, double> varVals = {{"x", 1.0f}, {"z",2.0f}};
+        std::cout << "evaluated: " << ast->evaluate(varVals);
     }
     
 

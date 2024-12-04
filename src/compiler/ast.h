@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <cassert>
 #include "eqscanner.h"
-
+#include <cmath>
 class ExprNode;
 
 
@@ -73,6 +73,16 @@ public:
 
 
     virtual std::string toString() {return m_LHS->toString() + "=" + m_RHS->toString();}
+
+    virtual double evaluate(std::unordered_map<std::string, double>& varVals)
+    {
+        /*
+            Eventually want to add some logic to force everything to one side
+        */
+
+
+       return m_RHS->evaluate(varVals);
+    }
 // we will add some properties to interact with other equation nodes here
 
 private: 
@@ -142,7 +152,30 @@ public:
         }
         return "TermNode::toString() error\n";
     }
+    virtual double evaluate(std::unordered_map<std::string, double>& varVals)
+    {
+        double ret = 0.0f;
+        switch (m_Type)
+        {
+            case TermType::TERMNUMBER:
+            {
+                ret = m_Number;
+                break;
+            }
+            case TermType::TERMVARIABLE:
+            {
+                ret = m_Number*pow(varVals[m_Var], m_Exponent);
+                break;
+            }
+            case TermType::TERMEXPRESSION:
+            {
+                ret = m_Number*pow(m_Expression->evaluate(varVals), m_Exponent);
+                break;
+            }
+        }
 
+        return ret;
+    }
 
 private:
     double m_Number;
@@ -195,6 +228,20 @@ public:
         return ret;
     }
 
+    virtual double evaluate(std::unordered_map<std::string, double>& varVals)
+    {
+        double val = m_Entries[0].expr->evaluate(varVals);
+        for (int i = 1; i < m_Entries.size(); i++)
+        {
+            auto& entry = m_Entries[i];
+            if (entry.type == TokenType::CROSS)
+                val += entry.expr->evaluate(varVals);
+            else
+                val -= entry.expr->evaluate(varVals);
+        }
+        return val;
+    }
+
 private:
     std::vector<ExpEntry> m_Entries;
 };
@@ -224,12 +271,26 @@ public:
         for (int i = 1; i < m_Entries.size(); i++)
         {
             auto& entry = m_Entries[i];
-            if (entry.type == TokenType::CROSS)
-                ret += "+" + entry.expr->toString();
+            if (entry.type == TokenType::STAR)
+                ret += "*" + entry.expr->toString();
             else
-                ret += "-" + entry.expr->toString();
+                ret += "/" + entry.expr->toString();
         }
         return ret;
+    }
+
+    virtual double evaluate(std::unordered_map<std::string, double>& varVals)
+    {
+        double val = m_Entries[0].expr->evaluate(varVals);
+        for (int i = 1; i < m_Entries.size(); i++)
+        {
+            auto& entry = m_Entries[i];
+            if (entry.type == TokenType::STAR)
+                val *= entry.expr->evaluate(varVals);
+            else
+                val /= entry.expr->evaluate(varVals);
+        }
+        return val;
     }
 private:
     std::vector<ExpEntry> m_Entries;
