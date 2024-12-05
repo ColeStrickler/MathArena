@@ -1,4 +1,7 @@
 #include "geometry.h"
+#include "eqscanner.h"
+#include "ast.h"
+#include "parser.h"
 extern Logger logger;
 
 
@@ -14,11 +17,54 @@ Function3D::Function3D(float xRange, float yRange, float zRange, int resolution,
 
 
     glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, height_scale, 1.0f));
+    std::string file = "/home/cole/Documents/MathArena/src/compiler/test.txt";
+    auto fs = std::ifstream(file);
+    auto eq = EquationScanner(&fs);
 
+    
+
+    bool err = false;
+    std::vector<Token*> tokens;
+    EquationNode* ast = nullptr;
+    while (true)
+    {
+
+        Token* out = nullptr;
+        auto type = eq.GetNextToken(&out);
+        if (type == TokenType::EQERROR)
+        {
+            printf("Error %d\n", eq.m_colNum);
+            break;
+        }
+        else if (type == TokenType::WHITESPACE)
+            continue;
+        else if (type == TokenType::END)
+            break;
+        else
+            std::cout << out->toString() << "\n";
+        tokens.push_back(out);
+    }
+    fs.close();
+
+    EquationParser parser(tokens);
+    if(!parser.Parse())
+    {
+        printf("here\n");
+        std::cout << parser.GetErrorString();
+        printf("Parse failed.\n");
+        return;
+
+    }
+    else
+    {
+        printf("Parse successful.");
+        ast = parser.GetEquation();
+        std::cout << ast->toString();
+    }
 
     int row = 0;
     int numVertices = 0;
-    
+    std::unordered_map<std::string, double> varVals = {{"x", 0.0f}, {"z",0.0f}, {"y", 0.0f}};
     for (float z = -1*m_zRange; z <= m_zRange; z += m_HeightStep)
     {
         int cell = 0;
@@ -28,7 +74,10 @@ Function3D::Function3D(float xRange, float yRange, float zRange, int resolution,
             // substitute a equation calculator here
             // y = equation->eval(x, z);
             // for now y = x^2 + z^2
-            float y = 0.2f*(x*x) + 0.2f*z*z;//+z*z*z*z);
+            varVals["z"] = z;
+            varVals["x"] = x;
+            float y = static_cast<float>(ast->evaluate(varVals));
+            //float y = 0.2f*(x*x) + 0.2f*z*z;//+z*z*z*z);
             // this may need to be reworked - may break things in how we push indices
 
             // gradient = normal 

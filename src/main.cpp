@@ -14,6 +14,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include "gl.h"
+#include "gui_manager.h"
 #include "shader.h"
 #include "glbuffer.h"
 #include "glvertexarray.h"
@@ -30,6 +31,7 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 extern Profiler profiler;
 extern Renderer renderer;
 extern Logger logger;
+extern GUI GUI_Manager;
 GLManager gl;
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -181,10 +183,10 @@ int main()
      auto grid = new Grid();
     auto sphere = new Function3D(8.0f, 12.0f, 8.0f, 500, &shaderProgram);
 
-    auto sphereNormals = new Function3D(8.0f, 12.0f, 8.0f, 500, &normalSP);
+  //  auto sphereNormals = new Function3D(8.0f, 12.0f, 8.0f, 500, &normalSP);
     printf("created sphere\n");
     renderer.AddRenderObject(sphere->m_RenderObj);
-    renderer.AddRenderObject(sphereNormals->m_RenderObj);
+   // renderer.AddRenderObject(sphereNormals->m_RenderObj);
     renderer.AddRenderObject(grid->m_RenderObj);
 
     //auto 
@@ -218,13 +220,13 @@ int main()
 
 
 
-    //IMGUI_CHECKVERSION();
-    //ImGui::CreateContext();
-    //ImGuiIO &io = ImGui::GetIO();
-    //(void)io;
-    //ImGui::StyleColorsDark();
-    //ImGui_ImplGlfw_InitForOpenGL(gl.GetWindow(), true);
-    //ImGui_ImplOpenGL3_Init("#version 330");
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO &io = ImGui::GetIO();
+    (void)io;
+    ImGui::StyleColorsDark();
+    ImGui_ImplGlfw_InitForOpenGL(gl.GetWindow(), true);
+    ImGui_ImplOpenGL3_Init("#version 330");
     float opacity = 0.5f;
     bool sign = false;
 
@@ -271,7 +273,7 @@ int main()
         // ------
 
         // tell OpenGL a new frame is about to begin
-        //GUI_Manager.Begin();
+        GUI_Manager.Begin();
 
         // draw our first triangle
         // glUseProgram(shaderProgram);
@@ -295,7 +297,14 @@ int main()
         
         renderer.RenderAllObjects();
         //gl.GetCamera()->CameraHandleKey_W();
-       
+        GUI_Manager.RenderGUI();
+        
+        // Text that appears in the window
+        // ImGui::Text("Hello there adventurer!");
+
+        // ImGui::End();
+
+        GUI_Manager.End();
 
         // va.Bind();
         // glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized

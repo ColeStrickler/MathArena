@@ -22,7 +22,7 @@ int EquationScanner::GetNextToken(Token** tok)
 
 
 
-int main()
+int main2()
 {
     std::string file = "/home/cole/Documents/MathArena/src/compiler/test.txt";
     auto fs = std::ifstream(file);
@@ -38,7 +38,7 @@ int main()
 
         Token* out = nullptr;
         auto type = eq.GetNextToken(&out);
-        if (type == TokenType::ERROR)
+        if (type == TokenType::EQERROR)
         {
             printf("Error %d\n", eq.m_colNum);
             break;

@@ -6,7 +6,7 @@ in vec3 Normal[];
 uniform mat4 projection;
 
 
-vec3 normal = vec3()
+
 
 void GenerateLine(int index)
 {

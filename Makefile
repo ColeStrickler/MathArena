@@ -16,6 +16,7 @@ INCLUDES=\
 -I./include/game/ \
 -I./include/dev/ \
 -I./include/ma/ \
+-I./include/compiler/ \
 -I./include/renderer/ \
 -I./include/util/ \
 -I/usr/include/freetype2 \
