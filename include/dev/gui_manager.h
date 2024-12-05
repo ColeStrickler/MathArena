@@ -10,7 +10,9 @@
 #include "logger.h"
 #include "renderobject.h"
 #include "profiler.h"
-
+#include "eqscanner.h"
+#include "parser.h"
+#include "ast.h"
 struct ObjectSelectionOptions
 {
     ObjectSelectionOptions() 
@@ -53,11 +55,12 @@ private:
     static void LoggingThread();
     static bool m_bRunLogThread;
     void DisplayLogs();
-
+    void EquationInput();
     void DisplayProfilerStatistics();
  //   void DisplayChunkManagementOptions();
     
-
+    char m_EquationBuffer[4096];
+    std::string m_ParsedEQ;
     /* object selection functionality */
     ObjectSelectionOptions m_ObjectOptions;
     RenderObject* m_CurrentObject;

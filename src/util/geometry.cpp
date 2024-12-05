@@ -49,7 +49,7 @@ Function3D::Function3D(float xRange, float yRange, float zRange, int resolution,
     EquationParser parser(tokens);
     if(!parser.Parse())
     {
-        printf("here\n");
+        //printf("here\n");
         std::cout << parser.GetErrorString();
         printf("Parse failed.\n");
         return;

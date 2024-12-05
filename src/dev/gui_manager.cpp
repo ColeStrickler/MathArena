@@ -38,7 +38,7 @@ bool RgbSlider(glm::vec3* v)
 
 
 
-GUI::GUI() : m_CurrentObject(nullptr)
+GUI::GUI() : m_CurrentObject(nullptr), m_ParsedEQ("")
 {
     m_LogThread = std::thread(LoggingThread);
 }
@@ -62,6 +62,7 @@ void GUI::RenderGUI()
     DisplayProfilerStatistics();
     DisplayObjectOptions();
     DisplayLogs();
+    EquationInput();
 }
 
 void GUI::Begin()
@@ -130,6 +131,58 @@ void GUI::DisplayLogs()
     {
         ImGui::Text("%s", log.c_str());
     }
+    ImGui::End();
+}
+
+void GUI::EquationInput()
+{
+    ImGui::Begin("Input Box Example");
+
+    // Create a single-line input box
+    ImGui::InputText("Enter Text", m_EquationBuffer, IM_ARRAYSIZE(m_EquationBuffer));
+
+    // Optional: Display the entered text below the input box
+    if (ImGui::Button("Compile"))
+    {
+
+        // may want to kick this off asynchronously
+        std::string eq = std::string(m_EquationBuffer);
+        auto istream = new std::istringstream(eq);
+        auto scanner = new EquationScanner(istream);
+        bool err = false;
+        std::vector<Token*> tokens;
+
+        while (true)
+        {
+
+            Token* out = nullptr;
+            auto type = scanner->GetNextToken(&out);
+            if (type == TokenType::EQERROR)
+            {
+                printf("Error %d\n", scanner->m_colNum);
+                break;
+            }
+            else if (type == TokenType::WHITESPACE)
+                continue;
+            else if (type == TokenType::END)
+                break;
+            tokens.push_back(out);
+        }
+        auto parser = new EquationParser(tokens);
+        if (!parser->Parse())
+        {
+            m_ParsedEQ = parser->GetErrorString();
+        }
+        else
+        {
+            m_ParsedEQ = parser->GetEquation()->toString();
+        }
+
+
+
+    }
+    ImGui::Text("Parsed Equation: %s", m_ParsedEQ.c_str());
+
     ImGui::End();
 }
 

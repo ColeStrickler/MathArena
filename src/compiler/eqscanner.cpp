@@ -10,6 +10,10 @@ EquationScanner::EquationScanner(std::ifstream* file) : yyFlexLexer(file), m_col
    
 }
 
+EquationScanner::EquationScanner(std::istream *stringstream) : yyFlexLexer(stringstream), m_colNum(0)
+{
+}
+
 EquationScanner::~EquationScanner()
 {
 }
@@ -56,7 +60,7 @@ int main2()
     EquationParser parser(tokens);
     if(!parser.Parse())
     {
-        printf("here\n");
+      //  printf("here\n");
         std::cout << parser.GetErrorString();
         printf("Parse failed.\n");
 

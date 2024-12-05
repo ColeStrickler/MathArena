@@ -214,7 +214,7 @@ bool ShaderProgram::Compile()
    
     int success;
     char infoLog[512];
-    printf("here\n");
+   // printf("here\n");
     glLinkProgram(m_ProgramId);
     // check for linking errors
       

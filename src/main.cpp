@@ -254,7 +254,7 @@ int main()
    
     while (!glfwWindowShouldClose(gl.GetWindow()))
     {
-        printf("here\n");
+        //printf("here\n");
         // gl.CalcDeltaTime();
        // chunkManager.PerFrame();
         gl.PerFrame();

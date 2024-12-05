@@ -62,6 +62,7 @@ class EquationScanner: public yyFlexLexer
 {
 public:
     EquationScanner(std::ifstream* file);
+    EquationScanner(std::istream* stringstream);
     ~EquationScanner();
 
     int yylex(Token** out);
