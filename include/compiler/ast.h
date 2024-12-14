@@ -8,7 +8,10 @@
 #include <cmath>
 class ExprNode;
 
-
+class MDNode;
+class ASNode;
+class TermNode;
+class EquationNode;
 
 
 class MathNode
@@ -42,6 +45,8 @@ public:
     {
 
     }
+
+    
 };
 
 
@@ -61,6 +66,21 @@ public:
     {
         return "ExprNode::toString()";
     }
+
+    virtual bool CanSolveForVar(const std::string& var)
+    {
+        return false;
+    }
+
+    virtual bool Solve(const std::string& var, EquationNode* equation)
+    {
+        return false;
+    }
+
+    virtual bool HasVarInstance(const std::string& var)
+    {
+        return false;
+    }
 };
 
 
@@ -71,16 +91,24 @@ public:
     EquationNode(ExprNode* lhs, ExprNode* rhs);
     ~EquationNode();
 
-
+    bool CanSolveForVar(const std::string& var);
+    bool Solve();
     virtual std::string toString() {return m_LHS->toString() + "=" + m_RHS->toString();}
+
+
+
+    void MultiplyRHS(ExprNode* multExpr);
+    void DivideRHS(ExprNode* divExpr);
+    void AddToRHS(ExprNode* addExpr);
+    void SubFromRHS(ExprNode* subExpr);
+    void ExpToRHS(float exp); // make this an entire ExprNode in the parser eventually
+
 
     virtual double evaluate(std::unordered_map<std::string, double>& varVals)
     {
         /*
             Eventually want to add some logic to force everything to one side
         */
-
-
        return m_RHS->evaluate(varVals);
     }
 
@@ -88,6 +116,9 @@ public:
 
 // we will add some properties to interact with other equation nodes here
 
+    ExprNode* GetRHS() const {return m_RHS;}
+    void SetRHS(ExprNode* newRHS) {m_RHS = newRHS;}
+    std::string m_SolvedVar;
 private: 
     ExprNode* m_LHS;
     ExprNode* m_RHS;
@@ -183,6 +214,30 @@ public:
         return ret;
     }
 
+
+    virtual bool CanSolveForVar(const std::string& var)
+    {
+        assert(var == "x" || var == "y" || var == "z");
+        return m_Var == var;
+    }
+
+
+    virtual bool Solve(const std::string& var, EquationNode* equation);
+
+    virtual bool HasVarInstance(const std::string& var)
+    {
+        switch (m_Type)
+        {
+            case TermType::TERMNUMBER: return false;
+            case TermType::TERMVARIABLE: return m_Var == var;
+            case TermType::TERMEXPRESSION: return m_Expression->HasVarInstance(var);
+            default:
+                // error
+                return false;
+        }
+        return false;
+    }
+
 private:
     double m_Number;
     std::string m_Var;
@@ -248,6 +303,30 @@ public:
         }
         return val;
     }
+    virtual bool CanSolveForVar(const std::string& var)
+    {
+        bool canSolve = false;
+        for (auto& e: m_Entries)
+        {
+            if (e.expr->CanSolveForVar(var))
+                canSolve = !canSolve; // can't solve if we have two instances of same var on side
+        }
+        return canSolve;       
+    }
+
+
+    virtual bool Solve(const std::string& var, EquationNode* equation);
+
+
+    virtual bool HasVarInstance(const std::string& var)
+    {
+        for (auto& e: m_Entries)
+        {
+            if (e.expr->HasVarInstance(var))
+                return true;
+        }
+        return false;
+    }
 
 private:
     std::vector<ExpEntry> m_Entries;
@@ -300,6 +379,32 @@ public:
         }
         return val;
     }
+
+    virtual bool CanSolveForVar(const std::string& var)
+    {
+        bool canSolve = false;
+        for (auto& e: m_Entries)
+        {
+            if (e.expr->CanSolveForVar(var))
+                canSolve = !canSolve; // can't solve if we have two instances of same var on side
+        }
+        return canSolve;       
+    }
+
+
+
+    virtual bool Solve(const std::string& var, EquationNode* equation);
+
+    virtual bool HasVarInstance(const std::string& var)
+    {
+        for (auto& e: m_Entries)
+        {
+            if (e.expr->HasVarInstance(var))
+                return true;
+        }
+        return false;
+    }
+
 private:
     std::vector<ExpEntry> m_Entries;
 };

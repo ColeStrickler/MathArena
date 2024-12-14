@@ -47,7 +47,10 @@ void MathArena::NewEquation(const std::string &equationString)
         We will put in some logic to solve the equation here
     */
 
-    AddEquation(eqNode);
+    if(!eqNode->Solve())
+        logger.Log(LOGTYPE::ERROR, "Could not solve for equation.");
+    else
+        AddEquation(eqNode);
 }
 
 void MathArena::RemoveEquation(int index)
