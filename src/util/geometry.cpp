@@ -6,10 +6,8 @@ extern Logger logger;
 
 
 
-Function3D::Function3D(float xRange, float yRange, float zRange, int resolution, ShaderProgram *sp) : m_xRange(xRange), m_yRange(yRange), m_zRange(zRange)
+Function3D::Function3D(float xRange, float yRange, float zRange, int resolution, ShaderProgram *sp, EquationNode* eq) : m_xRange(xRange), m_yRange(yRange), m_zRange(zRange), m_Eq(eq)
 {
-
-
     float height_scale = 0.5f;
     m_HeightStep = (zRange*2.0f) / resolution;
     m_StepValue = (xRange*2.0f) / resolution;
@@ -17,50 +15,6 @@ Function3D::Function3D(float xRange, float yRange, float zRange, int resolution,
 
 
     glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, height_scale, 1.0f));
-    std::string file = "/home/cole/Documents/MathArena/src/compiler/test.txt";
-    auto fs = std::ifstream(file);
-    auto eq = EquationScanner(&fs);
-
-    
-
-    bool err = false;
-    std::vector<Token*> tokens;
-    EquationNode* ast = nullptr;
-    while (true)
-    {
-
-        Token* out = nullptr;
-        auto type = eq.GetNextToken(&out);
-        if (type == TokenType::EQERROR)
-        {
-            printf("Error %d\n", eq.m_colNum);
-            break;
-        }
-        else if (type == TokenType::WHITESPACE)
-            continue;
-        else if (type == TokenType::END)
-            break;
-        else
-            std::cout << out->toString() << "\n";
-        tokens.push_back(out);
-    }
-    fs.close();
-
-    EquationParser parser(tokens);
-    if(!parser.Parse())
-    {
-        //printf("here\n");
-        std::cout << parser.GetErrorString();
-        printf("Parse failed.\n");
-        return;
-
-    }
-    else
-    {
-        printf("Parse successful.");
-        ast = parser.GetEquation();
-        std::cout << ast->toString();
-    }
 
     int row = 0;
     int numVertices = 0;
@@ -76,7 +30,7 @@ Function3D::Function3D(float xRange, float yRange, float zRange, int resolution,
             // for now y = x^2 + z^2
             varVals["z"] = z;
             varVals["x"] = x;
-            float y = static_cast<float>(ast->evaluate(varVals));
+            float y = static_cast<float>(m_Eq->evaluate(varVals));
             //float y = 0.2f*(x*x) + 0.2f*z*z;//+z*z*z*z);
             // this may need to be reworked - may break things in how we push indices
 
@@ -115,10 +69,13 @@ Function3D::Function3D(float xRange, float yRange, float zRange, int resolution,
         }
         row++;
     }
+   printf("Generated vertices!\n");
     VertexBuffer* vb = new VertexBuffer((float*)m_Vertices.data(), m_Vertices.size() * sizeof(SphereVertex));
+    printf("Generated vertices!\n");
     BufferLayout* funcVBLayout = new BufferLayout({new BufferElement("COORDS", ShaderDataType::Float3, false),
          new BufferElement("NORMALS", ShaderDataType::Float3, false),
           new BufferElement("TEXCOORDS", ShaderDataType::Float2, false) });
+     
     vb->SetLayout(funcVBLayout);
     IndexBuffer* ib = new IndexBuffer(m_Indices.data(), m_Indices.size());
     VertexArray* va = new VertexArray();
@@ -128,7 +85,7 @@ Function3D::Function3D(float xRange, float yRange, float zRange, int resolution,
    
     va->SetCount(m_Indices.size());
 
-   
+    
     //Shader* sphereVertexShader = new Shader(util::getcwd() + "/src/shaders/3D_Geometry/sphereVertex.glsl", GL_VERTEX_SHADER)
     //Shader* sphereFragmentShader = new Shader(util::getcwd() + "/src/shaders/3D_Geometry/sphereFragment.glsl", GL_FRAGMENT_SHADER);
     
@@ -147,6 +104,17 @@ Function3D::Function3D(float xRange, float yRange, float zRange, int resolution,
    // m_RenderObj->m_MaterialId = PHONG_MATERIAL::BRONZE;
 
     m_RenderObj->ScaleMatrix(scaleMatrix);
+}
+
+Function3D::~Function3D()
+{
+    delete m_Eq;
+
+    /*
+        We set the delete here and it will be properly removed from the render list and deleted
+        by the Renderer
+    */
+    m_RenderObj->m_bDelete = true;
 }
 
 void Function3D::addVertex(glm::vec3 pos, glm::vec3 normal)

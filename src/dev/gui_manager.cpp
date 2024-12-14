@@ -1,14 +1,17 @@
 #include "gui_manager.h"
 #include "renderer.h"
+#include "geometry.h"
+#include <future>
 GUI GUI_Manager;
 extern Renderer renderer;
 extern Logger logger;
 extern Profiler profiler;
 extern GLManager gl;
+extern MathArena* matharena;
 LogTarget GUI::m_LogTarget;
 bool GUI::m_bRunLogThread;
 std::thread GUI::m_LogThread;
-
+extern ShaderProgram* spGlobal;
 extern int MAX_CHUNKS;
 extern float CHUNK_DISTANCE;
 extern float DELETE_DISTANCE;
@@ -38,7 +41,7 @@ bool RgbSlider(glm::vec3* v)
 
 
 
-GUI::GUI() : m_CurrentObject(nullptr), m_ParsedEQ("")
+GUI::GUI() : m_CurrentObject(nullptr)
 {
     m_LogThread = std::thread(LoggingThread);
 }
@@ -145,43 +148,10 @@ void GUI::EquationInput()
     if (ImGui::Button("Compile"))
     {
 
-        // may want to kick this off asynchronously
-        std::string eq = std::string(m_EquationBuffer);
-        auto istream = new std::istringstream(eq);
-        auto scanner = new EquationScanner(istream);
-        bool err = false;
-        std::vector<Token*> tokens;
-
-        while (true)
-        {
-
-            Token* out = nullptr;
-            auto type = scanner->GetNextToken(&out);
-            if (type == TokenType::EQERROR)
-            {
-                printf("Error %d\n", scanner->m_colNum);
-                break;
-            }
-            else if (type == TokenType::WHITESPACE)
-                continue;
-            else if (type == TokenType::END)
-                break;
-            tokens.push_back(out);
-        }
-        auto parser = new EquationParser(tokens);
-        if (!parser->Parse())
-        {
-            m_ParsedEQ = parser->GetErrorString();
-        }
-        else
-        {
-            m_ParsedEQ = parser->GetEquation()->toString();
-        }
-
-
-
+        // may want to kick this off asynchronously?
+        matharena->NewEquation(std::string(m_EquationBuffer));
+        //std::async(&MathArena::NewEquation, matharena, std::string(m_EquationBuffer));
     }
-    ImGui::Text("Parsed Equation: %s", m_ParsedEQ.c_str());
 
     ImGui::End();
 }

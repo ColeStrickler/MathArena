@@ -8,6 +8,7 @@
 #include <renderobject.h>
 #include "util.h"
 #include "logger.h"
+#include "ast.h"
 
 typedef struct 
 {
@@ -41,14 +42,14 @@ private:
 class Function3D
 {
 public:
-    Function3D(float xRange, float yRange, float zRange, int resolution, ShaderProgram* sp);
+    Function3D(float xRange, float yRange, float zRange, int resolution, ShaderProgram* sp, EquationNode* eq);
     ~Function3D();
     void addVertex(glm::vec3 pos, glm::vec3 normal);
-
     std::vector<SphereVertex> m_Vertices;
     std::vector<unsigned int> m_Indices;
     RenderObject* m_RenderObj;
     ShaderProgram* m_FuncShader;
+    EquationNode* m_Eq;
 private:
     int m_Resolution;
     float m_StepValue;

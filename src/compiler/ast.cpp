@@ -6,7 +6,10 @@ EquationNode::EquationNode(ExprNode* lhs, ExprNode* rhs) : m_LHS(lhs), m_RHS(rhs
 
 EquationNode::~EquationNode()
 {
+    delete m_LHS;
+    delete m_RHS;
 }
+
 
 void ASNode::AddExpr(ExprNode *expr, TokenType op)
 {

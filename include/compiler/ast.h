@@ -54,7 +54,7 @@ public:
     }
     ~ExprNode()
     {
-
+        
     }
 
     virtual std::string toString() override
@@ -83,6 +83,9 @@ public:
 
        return m_RHS->evaluate(varVals);
     }
+
+
+
 // we will add some properties to interact with other equation nodes here
 
 private: 
@@ -124,7 +127,10 @@ public:
     }
 
     virtual void Negate() override;
-    ~TermNode();
+    ~TermNode()
+    {
+        delete m_Expression;
+    }
 
     virtual std::string toString() override {
         printf("TermNode::toString()\n");
@@ -207,7 +213,8 @@ public:
     }
     ~ASNode()
     {
-
+        for (auto& e : m_Entries)
+            delete e.expr;
     }
     void AddExpr(ExprNode* expr, TokenType op);
 
@@ -259,7 +266,8 @@ public:
     }
     ~MDNode()
     {
-
+        for (auto& e : m_Entries)
+            delete e.expr;
     }
     void AddExpr(ExprNode* expr, TokenType op);
 

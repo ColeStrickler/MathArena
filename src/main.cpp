@@ -27,12 +27,15 @@
 #include "grid.h"
 #include "utility"
 #include "vertices.h"
+#include "matharena.h"
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 extern Profiler profiler;
 extern Renderer renderer;
 extern Logger logger;
 extern GUI GUI_Manager;
+extern MathArena* matharena;
 GLManager gl;
+ShaderProgram* spGlobal;
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -44,7 +47,7 @@ const unsigned int SCR_HEIGHT = 600;
 
 int main()
 {
-
+    printf("here\n");
     // Check for ARB_invalidate_subdata support
     if (glInvalidateBufferSubData == NULL) {
         // Handle the case where the extension is not supported
@@ -58,7 +61,11 @@ int main()
     
 
 
-
+    matharena = new MathArena();
+    if (matharena->HasError())
+    {
+        
+    }
 
 
 
@@ -102,7 +109,7 @@ int main()
     shaderProgram.AddShader(&vertex_shader);
     shaderProgram.AddShader(&fragment_shader);
 
-   
+    spGlobal = &shaderProgram;
     // glAttachShader(shaderProgram, vertexShader);
     // glAttachShader(shaderProgram, fragmentShader);
     renderer.SetLightingModel(LightingModel::Phong);
@@ -180,14 +187,14 @@ int main()
 //  
     //auto sphere = new Sphere(1.0f, 100, &shaderProgram);
     glLineWidth(2);
-     auto grid = new Grid();
-    auto sphere = new Function3D(8.0f, 12.0f, 8.0f, 500, &shaderProgram);
+
+   //auto sphere = new Function3D(8.0f, 12.0f, 8.0f, 500, &shaderProgram);
 
   //  auto sphereNormals = new Function3D(8.0f, 12.0f, 8.0f, 500, &normalSP);
     printf("created sphere\n");
-    renderer.AddRenderObject(sphere->m_RenderObj);
+    //renderer.AddRenderObject(sphere->m_RenderObj);
    // renderer.AddRenderObject(sphereNormals->m_RenderObj);
-    renderer.AddRenderObject(grid->m_RenderObj);
+    //renderer.AddRenderObject(grid->m_RenderObj);
 
     //auto 
 

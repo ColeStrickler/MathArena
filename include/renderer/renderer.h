@@ -55,7 +55,7 @@ public:
     ~Renderer();
     void AddRenderObject(RenderObject* obj);
     void RenderAllObjects();
-    void RenderText(const std::string& text, float x, float y, float scale, const glm::vec3& color){m_TextRenderer.RenderText(text,x,y,scale,color);};
+    //void RenderText(const std::string& text, float x, float y, float scale, const glm::vec3& color){m_TextRenderer.RenderText(text,x,y,scale,color);};
     RenderObject* FindClosestObject(const glm::vec3& pos);
     void SetLightingModel(LightingModel model) {m_LightingModel = model;}
     LightingModel GetLightingModel() const {return m_LightingModel;}
@@ -63,7 +63,7 @@ public:
 
 
     // move back to private
-    TextRenderer m_TextRenderer;
+    //TextRenderer m_TextRenderer;
 private:
     LightingModel m_LightingModel;
     std::vector<RenderObject*> m_RenderObjects;
