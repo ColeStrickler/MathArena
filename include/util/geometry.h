@@ -44,6 +44,9 @@ class Function3D
 public:
     Function3D(float xRange, float yRange, float zRange, int resolution, ShaderProgram* sp, EquationNode* eq);
     ~Function3D();
+
+    void GenVertices();
+
     void addVertex(glm::vec3 pos, glm::vec3 normal);
     std::vector<SphereVertex> m_Vertices;
     std::vector<unsigned int> m_Indices;
@@ -51,6 +54,13 @@ public:
     ShaderProgram* m_FuncShader;
     EquationNode* m_Eq;
 private:
+
+
+    void GenVerticesSolveY();
+    void GenVerticesSolveX();
+    void GenVerticesSolveZ();
+
+
     int m_Resolution;
     float m_StepValue;
     float m_HeightStep;

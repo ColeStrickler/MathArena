@@ -59,8 +59,9 @@ bool ASNode::Solve(const std::string &var, EquationNode *equation)
     int i = 0;
     auto asExpr = new ASNode();
     asExpr->AddExpr(equation->GetRHS(), TokenType::CROSS);
-    for (auto& e: m_Entries)
+    for (int i = 0; i < m_Entries.size();)
     {
+        auto& e = m_Entries[i];
         if (e.expr->HasVarInstance(var))
         {
             i++;
@@ -71,7 +72,6 @@ bool ASNode::Solve(const std::string &var, EquationNode *equation)
         // Do the opposite operation
         asExpr->AddExpr(e.expr, e.type == TokenType::CROSS ? TokenType::DASH : TokenType::CROSS);
         m_Entries.erase(m_Entries.begin() + i);
-        i++;
     }
    // printf("here! %d\n", m_Entries.size());
     // we do not yet have factoring, should only be one term left
@@ -93,8 +93,9 @@ bool MDNode::Solve(const std::string &var, EquationNode *equation)
     int i = 0;
     auto asExpr = new MDNode();
     asExpr->AddExpr(equation->GetRHS(), TokenType::STAR);
-    for (auto& e: m_Entries)
+    for (int i = 0; i < m_Entries.size();)
     {
+        auto& e = m_Entries[i];
         if (e.expr->HasVarInstance(var))
         {
             i++;
@@ -104,8 +105,8 @@ bool MDNode::Solve(const std::string &var, EquationNode *equation)
         // Do the opposite operation
         asExpr->AddExpr(e.expr, e.type == TokenType::STAR ? TokenType::SLASH : TokenType::STAR);
         m_Entries.erase(m_Entries.begin() + i);
-        i++;
     }
+    printf("here\n");
     // we do not yet have factoring, should only be one term left
     if (m_Entries.size() != 1)
         return false;
@@ -128,12 +129,16 @@ bool TermNode::Solve(const std::string &var, EquationNode *equation)
         case TermType::TERMVARIABLE:
         {
             printf("TermNode solve variable\n");
-            auto mdNode = new MDNode();
-            mdNode->AddExpr(equation->GetRHS(), TokenType::STAR);
-            // divide by coefficient
-            auto divTerm = new TermNode(m_Number);
-            mdNode->AddExpr(divTerm, TokenType::SLASH);
-            equation->SetRHS(mdNode);
+            if (m_Number != 1.0f)
+            {
+                auto mdNode = new MDNode();
+                mdNode->AddExpr(equation->GetRHS(), TokenType::STAR);
+                // divide by coefficient
+                auto divTerm = new TermNode(m_Number);
+                mdNode->AddExpr(divTerm, TokenType::SLASH);
+                equation->SetRHS(mdNode);
+            }
+            
             // power to inverse exponent
             auto invExp = new TermNode(1.0f, equation->GetRHS(), 1.0f/m_Exponent);
             equation->SetRHS(invExp);
